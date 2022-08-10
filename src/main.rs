@@ -1,6 +1,6 @@
+use lib::repos::transition as TransitionRepo;
 use lib::repos::user as UserRepo;
-use lib::repos::vacation as VacationRepo;
-use lib::types::vacation::Vacation;
+use lib::types::transition::Transition;
 use lib::utils::establish_connection::establish_connection;
 use uuid::Uuid;
 
@@ -27,7 +27,16 @@ fn main() {
         end_date: chrono::NaiveDate::from_ymd(2022, 06, 18),
     }; */
 
+    let newTransition = Transition {
+        id: Uuid::new_v4(),
+        user_id: my_id,
+        date: chrono::NaiveDate::from_ymd(2022, 1, 1),
+    };
+
+    // let res = TransitionRepo::insert(newTransition, &connection).unwrap();
+
     // VacationRepo::insert(newVacation, &connection);
-    let res = VacationRepo::get_all(&connection).unwrap();
+    // let res = VacationRepo::get_all(&connection).unwrap();
+    let res = TransitionRepo::get_by_user_id(my_id, &connection).unwrap();
     println!("{:?}", res);
 }

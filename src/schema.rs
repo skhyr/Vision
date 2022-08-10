@@ -1,4 +1,12 @@
 table! {
+    transitions (id) {
+        id -> Uuid,
+        user_id -> Uuid,
+        date -> Date,
+    }
+}
+
+table! {
     users (id) {
         id -> Uuid,
         name -> Varchar,
@@ -18,9 +26,11 @@ table! {
     }
 }
 
+joinable!(transitions -> users (user_id));
 joinable!(vacations -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
+    transitions,
     users,
     vacations,
 );

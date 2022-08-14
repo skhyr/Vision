@@ -9,4 +9,5 @@ pub struct Transition {
     pub id: Uuid,
     pub user_id: Uuid,
     pub date: NaiveDate,
+    pub fraction: f64,
 }

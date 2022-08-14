@@ -3,6 +3,7 @@ table! {
         id -> Uuid,
         user_id -> Uuid,
         date -> Date,
+        fraction -> Float8,
     }
 }
 

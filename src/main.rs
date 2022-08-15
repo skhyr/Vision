@@ -1,6 +1,8 @@
 use lib::repos::transition as TransitionRepo;
 // use lib::repos::user as UserRepo;
+use lib::services::calculator;
 use lib::types::transition::Transition;
+use lib::types::vacation::Vacation;
 use lib::utils::establish_connection::establish_connection;
 use uuid::Uuid;
 
@@ -30,12 +32,30 @@ fn main() {
     let newTransition = Transition {
         id: Uuid::new_v4(),
         user_id: my_id,
-        date: chrono::NaiveDate::from_ymd(2022, 1, 1),
+        date: chrono::NaiveDate::from_ymd(2021, 7, 1),
         fraction: 0.5,
     };
 
     // let res = TransitionRepo::insert(newTransition, &connection).unwrap();
-    let res = TransitionRepo::get_all(&connection);
+    let transitions = TransitionRepo::get_all(&connection).unwrap();
+    let res = calculator::count_used_hours(my_id, &connection);
+    /* let res = calculator::count_days_in_vacation(&Vacation {
+        id: uuid::Uuid::new_v4(),
+        user_id: uuid::Uuid::new_v4(),
+        title: "test".into(),
+        start_date: chrono::NaiveDate::from_ymd(2022, 5, 7),
+        end_date: chrono::NaiveDate::from_ymd(2022, 5, 12),
+    }); */
+
+    let vacation = Vacation {
+        id: uuid::Uuid::new_v4(),
+        user_id: uuid::Uuid::new_v4(),
+        title: "test".into(),
+        start_date: chrono::NaiveDate::from_ymd(2021, 9, 7),
+        end_date: chrono::NaiveDate::from_ymd(2021, 9, 12),
+    };
+
+    // let res = calculator::match_transition_to_vacation(&vacation, &transitions);
 
     // VacationRepo::insert(newVacation, &connection);
     // let res = VacationRepo::get_all(&connection).unwrap();

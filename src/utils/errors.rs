@@ -3,4 +3,5 @@ pub enum Errors {
     InsertFailed,
     QueryFailed,
     Unauthorized,
+    InvalidVacationFound,
 }

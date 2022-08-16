@@ -14,13 +14,13 @@ pub fn count_days_in_vacation(vacation: &Vacation) -> i32 {
 pub fn match_transition_to_vacation<'a>(
     vacation: &Vacation,
     transitions: &'a Vec<Transition>,
-) -> &'a Transition {
+) -> Result<&'a Transition, Errors> {
     transitions
         .iter()
         .find(|transition| {
             transition.date.num_days_from_ce() < vacation.start_date.num_days_from_ce()
         })
-        .unwrap()
+        .ok_or(Errors::InvalidVacationFound)
 }
 
 pub fn count_used_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, Errors> {
@@ -31,19 +31,20 @@ pub fn count_used_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, Error
         let bn = b.date.num_days_from_ce();
         bn.cmp(&an)
     });
-    let sorted_transitions = transitions;
 
-    Ok(all_vacations
+    all_vacations
         .iter()
         .map(|vacation| {
-            (
-                vacation,
-                match_transition_to_vacation(vacation, &sorted_transitions),
-            )
+            match_transition_to_vacation(vacation, &transitions)
+                .map(|transition| (vacation, transition))
         })
-        .map(|(vacation, transition)| {
-            let vacation_length = count_days_in_vacation(&vacation);
-            vacation_length as f64 * transition.fraction * 8.0
+        .collect::<Result<Vec<(&Vacation, &Transition)>, Errors>>()
+        .map(|vec| {
+            vec.iter()
+                .map(|(vacation, transition)| {
+                    let vacation_length = count_days_in_vacation(&vacation);
+                    vacation_length as f64 * transition.fraction * 8.0
+                })
+                .fold(0.0, |acc, len| acc + len)
         })
-        .fold(0.0, |acc, len| acc + len))
 }

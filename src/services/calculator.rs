@@ -53,8 +53,14 @@ pub fn count_generated_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, 
         .iter()
         .fold((0.0, now), |(acc, prev_date), transition| {
             let duration = DateService::num_months_between(transition.date, prev_date) as f64;
-            let gen_hours = 1.75 * duration * transition.fraction;
+            let gen_hours = 1.75 * 8.0 * duration * transition.fraction;
             (acc + gen_hours, transition.date)
         });
     Ok(res)
+}
+
+pub fn count_hours_left(user_id: Uuid, conn: &PgConnection) -> Result<f64, Errors> {
+    let generated = count_generated_hours(user_id, conn)?;
+    let used = count_used_hours(user_id, conn)?;
+    Ok(generated - used)
 }

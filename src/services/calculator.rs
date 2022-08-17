@@ -1,5 +1,6 @@
-use crate::repos::transition as TransitionRepo;
 use crate::repos::vacation as VacationRepo;
+use crate::services::date as DateService;
+use crate::services::transition as TransitionService;
 use crate::types::transition::Transition;
 use crate::types::vacation::Vacation;
 use crate::utils::errors::Errors;
@@ -24,13 +25,8 @@ pub fn match_transition_to_vacation<'a>(
 }
 
 pub fn count_used_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, Errors> {
-    let all_vacations = VacationRepo::get_by_user_id(user_id, &conn)?;
-    let mut transitions = TransitionRepo::get_by_user_id(user_id, &conn)?;
-    transitions.sort_by(|a, b| {
-        let an = a.date.num_days_from_ce();
-        let bn = b.date.num_days_from_ce();
-        bn.cmp(&an)
-    });
+    let all_vacations = VacationRepo::get_by_user_id(user_id, conn)?;
+    let transitions = TransitionService::get_sorted_transitions(user_id, conn)?;
 
     all_vacations
         .iter()
@@ -47,4 +43,18 @@ pub fn count_used_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, Error
                 })
                 .fold(0.0, |acc, len| acc + len)
         })
+}
+
+pub fn count_generated_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, Errors> {
+    let transitions = TransitionService::get_sorted_transitions(user_id, &conn)?;
+    let now = DateService::get_now_as_transition_date(user_id, conn)?;
+
+    let (res, _) = transitions
+        .iter()
+        .fold((0.0, now), |(acc, prev_date), transition| {
+            let duration = DateService::num_months_between(transition.date, prev_date) as f64;
+            let gen_hours = 1.75 * duration * transition.fraction;
+            (acc + gen_hours, transition.date)
+        });
+    Ok(res)
 }

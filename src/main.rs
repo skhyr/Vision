@@ -38,7 +38,8 @@ fn main() {
 
     // let res = TransitionRepo::insert(newTransition, &connection).unwrap();
     let transitions = TransitionRepo::get_all(&connection).unwrap();
-    let res = calculator::count_used_hours(my_id, &connection);
+    // let res = calculator::count_used_hours(my_id, &connection);
+    let res = calculator::count_generated_hours(my_id, &connection);
     /* let res = calculator::count_days_in_vacation(&Vacation {
         id: uuid::Uuid::new_v4(),
         user_id: uuid::Uuid::new_v4(),

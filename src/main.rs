@@ -39,7 +39,9 @@ fn main() {
     // let res = TransitionRepo::insert(newTransition, &connection).unwrap();
     let transitions = TransitionRepo::get_all(&connection).unwrap();
     // let res = calculator::count_used_hours(my_id, &connection);
-    let res = calculator::count_generated_hours(my_id, &connection);
+    let gen = calculator::count_generated_hours(my_id, &connection);
+    let used = calculator::count_used_hours(my_id, &connection);
+    let left = calculator::count_hours_left(my_id, &connection);
     /* let res = calculator::count_days_in_vacation(&Vacation {
         id: uuid::Uuid::new_v4(),
         user_id: uuid::Uuid::new_v4(),
@@ -61,5 +63,7 @@ fn main() {
     // VacationRepo::insert(newVacation, &connection);
     // let res = VacationRepo::get_all(&connection).unwrap();
     // let res = TransitionRepo::get_by_user_id(my_id, &connection).unwrap();
-    println!("{:?}", res);
+    println!("gen: {:?}", gen);
+    println!("used: {:?}", used);
+    println!("left: {:?}", left);
 }

@@ -8,10 +8,6 @@ use chrono::Datelike;
 use diesel::pg::PgConnection;
 use uuid::Uuid;
 
-pub fn count_days_in_vacation(vacation: &Vacation) -> i32 {
-    vacation.end_date.num_days_from_ce() - vacation.start_date.num_days_from_ce() + 1
-}
-
 pub fn match_transition_to_vacation<'a>(
     vacation: &Vacation,
     transitions: &'a Vec<Transition>,
@@ -24,31 +20,49 @@ pub fn match_transition_to_vacation<'a>(
         .ok_or(Errors::InvalidVacationFound)
 }
 
-pub fn count_used_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, Errors> {
-    let all_vacations = VacationRepo::get_by_user_id(user_id, conn)?;
-    let transitions = TransitionService::get_sorted_transitions(user_id, conn)?;
-
-    all_vacations
+pub fn pair_transitions_with_vacations<'a>(
+    vacations: &'a Vec<Vacation>,
+    transitions: &'a Vec<Transition>,
+) -> Result<Vec<(&'a Vacation, &'a Transition)>, Errors> {
+    vacations
         .iter()
         .map(|vacation| {
             match_transition_to_vacation(vacation, &transitions)
                 .map(|transition| (vacation, transition))
         })
-        .collect::<Result<Vec<(&Vacation, &Transition)>, Errors>>()
-        .map(|vec| {
-            vec.iter()
-                .map(|(vacation, transition)| {
-                    let vacation_length = count_days_in_vacation(&vacation);
-                    vacation_length as f64 * transition.fraction * 8.0
-                })
-                .fold(0.0, |acc, len| acc + len)
-        })
+        .collect()
 }
 
-pub fn count_generated_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, Errors> {
-    let transitions = TransitionService::get_sorted_transitions(user_id, &conn)?;
-    let now = DateService::get_now_as_transition_date(user_id, conn)?;
+pub fn count_used_hours(
+    vacations: &Vec<Vacation>,
+    transitions: &Vec<Transition>,
+) -> Result<f64, Errors> {
+    pair_transitions_with_vacations(&vacations, &transitions).map(|vec| {
+        vec.iter()
+            .map(|(vacation, transition)| {
+                let vacation_length =
+                    DateService::count_days_between(vacation.start_date, vacation.end_date);
+                vacation_length as f64 * transition.fraction * 8.0
+            })
+            .fold(0.0, |acc, len| acc + len)
+    })
+}
 
+pub fn count_used_days(
+    vacations: &Vec<Vacation>,
+    transitions: &Vec<Transition>,
+) -> Result<f64, Errors> {
+    pair_transitions_with_vacations(&vacations, &transitions).map(|vec| {
+        vec.iter()
+            .map(|(vacation, transition)| {
+                DateService::count_days_between(vacation.start_date, vacation.end_date) as f64
+            })
+            .fold(0.0, |acc, len| acc + len)
+    })
+}
+
+pub fn count_generated_hours(transitions: &Vec<Transition>) -> Result<f64, Errors> {
+    let now = DateService::get_now_as_transition_date()?;
     let (res, _) = transitions
         .iter()
         .fold((0.0, now), |(acc, prev_date), transition| {
@@ -59,8 +73,20 @@ pub fn count_generated_hours(user_id: Uuid, conn: &PgConnection) -> Result<f64, 
     Ok(res)
 }
 
-pub fn count_hours_left(user_id: Uuid, conn: &PgConnection) -> Result<f64, Errors> {
-    let generated = count_generated_hours(user_id, conn)?;
-    let used = count_used_hours(user_id, conn)?;
+pub fn count_hours_left(
+    vacations: &Vec<Vacation>,
+    transitions: &Vec<Transition>,
+) -> Result<f64, Errors> {
+    let generated = count_generated_hours(transitions)?;
+    let used = count_used_hours(vacations, transitions)?;
     Ok(generated - used)
+}
+
+pub fn count_days_left(
+    vacations: &Vec<Vacation>,
+    transitions: &Vec<Transition>,
+) -> Result<f64, Errors> {
+    let generated = count_generated_hours(transitions)?;
+    let used = count_used_hours(vacations, transitions)?;
+    Ok((generated - used) / (transitions[0].fraction * 8.0))
 }

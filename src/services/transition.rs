@@ -1,7 +1,7 @@
 use crate::repos::transition as TransitionRepo;
 use crate::types::transition::Transition;
 use crate::utils::errors::Errors;
-use chrono::{Datelike, NaiveDate};
+use chrono::Datelike;
 use diesel::pg::PgConnection;
 use uuid::Uuid;
 

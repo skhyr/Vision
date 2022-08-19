@@ -1,0 +1,10 @@
+use crate::types::stats::Stats;
+use crate::types::transition::Transition;
+use crate::types::vacation::Vacation;
+
+#[derive(Debug)]
+pub struct Info {
+    pub vacations: Vec<Vacation>,
+    pub transitions: Vec<Transition>,
+    pub stats: Stats,
+}

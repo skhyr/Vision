@@ -1,12 +1,8 @@
-use crate::repos::vacation as VacationRepo;
 use crate::services::date as DateService;
-use crate::services::transition as TransitionService;
 use crate::types::transition::Transition;
 use crate::types::vacation::Vacation;
 use crate::utils::errors::Errors;
 use chrono::Datelike;
-use diesel::pg::PgConnection;
-use uuid::Uuid;
 
 pub fn match_transition_to_vacation<'a>(
     vacation: &Vacation,
@@ -48,17 +44,13 @@ pub fn count_used_hours(
     })
 }
 
-pub fn count_used_days(
-    vacations: &Vec<Vacation>,
-    transitions: &Vec<Transition>,
-) -> Result<f64, Errors> {
-    pair_transitions_with_vacations(&vacations, &transitions).map(|vec| {
-        vec.iter()
-            .map(|(vacation, transition)| {
-                DateService::count_days_between(vacation.start_date, vacation.end_date) as f64
-            })
-            .fold(0.0, |acc, len| acc + len)
-    })
+pub fn count_used_days(vacations: &Vec<Vacation>) -> Result<f64, Errors> {
+    Ok(vacations
+        .iter()
+        .map(|vacation| {
+            DateService::count_days_between(vacation.start_date, vacation.end_date) as f64
+        })
+        .fold(0.0, |acc, len| acc + len))
 }
 
 pub fn count_generated_hours(transitions: &Vec<Transition>) -> Result<f64, Errors> {

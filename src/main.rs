@@ -1,8 +1,4 @@
-use lib::repos::transition as TransitionRepo;
-// use lib::repos::user as UserRepo;
 use lib::services::user as UserService;
-use lib::types::transition::Transition;
-use lib::types::vacation::Vacation;
 use lib::utils::establish_connection::establish_connection;
 use uuid::Uuid;
 

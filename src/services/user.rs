@@ -16,7 +16,7 @@ pub fn gen_stats(
     Ok(Stats {
         generated_hours: Calculator::count_generated_hours(transitions)?,
         used_hours: Calculator::count_used_hours(vacations, transitions)?,
-        used_days: Calculator::count_used_days(vacations, transitions)?,
+        used_days: Calculator::count_used_days(vacations)?,
         hours_left: Calculator::count_hours_left(vacations, transitions)?,
         days_left: Calculator::count_days_left(vacations, transitions)?,
     })

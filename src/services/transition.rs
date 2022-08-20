@@ -1,5 +1,5 @@
 use crate::repos::transition as TransitionRepo;
-use crate::types::transition::Transition;
+use crate::types::transition::{NewTransition, Transition};
 use crate::utils::errors::Errors;
 use chrono::Datelike;
 use diesel::pg::PgConnection;
@@ -16,4 +16,18 @@ pub fn get_sorted_transitions(
         bn.cmp(&an)
     });
     Ok(transitions)
+}
+
+pub fn add(
+    new_transition: NewTransition,
+    user_id: Uuid,
+    conn: &PgConnection,
+) -> Result<Transition, Errors> {
+    let transition = Transition {
+        id: Uuid::new_v4(),
+        user_id,
+        fraction: new_transition.fraction,
+        date: new_transition.date,
+    };
+    TransitionRepo::insert(transition, conn)
 }

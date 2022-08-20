@@ -11,3 +11,9 @@ pub struct Transition {
     pub date: NaiveDate,
     pub fraction: f64,
 }
+
+#[derive(Debug)]
+pub struct NewTransition {
+    pub date: NaiveDate,
+    pub fraction: f64,
+}

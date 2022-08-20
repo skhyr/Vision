@@ -1,4 +1,11 @@
 table! {
+    organizations (id) {
+        id -> Uuid,
+        name -> Varchar,
+    }
+}
+
+table! {
     transitions (id) {
         id -> Uuid,
         user_id -> Uuid,
@@ -14,6 +21,7 @@ table! {
         surname -> Varchar,
         access_code -> Int4,
         accounting_day -> Int4,
+        organization_id -> Uuid,
     }
 }
 
@@ -28,9 +36,11 @@ table! {
 }
 
 joinable!(transitions -> users (user_id));
+joinable!(users -> organizations (organization_id));
 joinable!(vacations -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
+    organizations,
     transitions,
     users,
     vacations,

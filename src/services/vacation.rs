@@ -8,12 +8,13 @@ use crate::utils::errors::Errors;
 use diesel::PgConnection;
 use uuid::Uuid;
 
-pub fn calc_vacation(vacation: &Vacation, transitions: &Vec<Transition>) -> Result<Stats, Errors> {
-    UserService::gen_stats(vec![vacation], transitions)
+pub fn calc_vacation(vacation: Vacation, transitions: &Vec<Transition>) -> Result<Stats, Errors> {
+    let vacations = vec![vacation];
+    UserService::gen_stats(&vacations, transitions)
 }
 
 pub fn get_calc_vacation(
-    vacation: &Vacation,
+    vacation: Vacation,
     user_id: Uuid,
     conn: &PgConnection,
 ) -> Result<Stats, Errors> {

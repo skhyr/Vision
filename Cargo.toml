@@ -3,8 +3,6 @@ name = "vision"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 uuid = { version = "0.8.2", features = ["serde", "v4"] }
 serde = { version = "1.0", features = ["derive"] }
@@ -12,6 +10,13 @@ serde_json = "1.0"
 diesel = { version = "1.4.5", features = ["chrono", "postgres", "r2d2", "uuidv07"]}
 chrono = "0.4"
 dotenv = "0.15.0"
+rocket = "0.5.0-rc.2"
+rocket_cors = "0.5.0"
+
+[dependencies.rocket_contrib]
+version = "0.4.10"
+default-features = false
+features = ["json", "diesel_postgres_pool"]
 
 [lib]
 name = "lib"

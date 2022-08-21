@@ -12,3 +12,10 @@ pub struct User {
     pub accounting_day: i32,
     pub organization_id: Uuid,
 }
+
+pub struct NewUser {
+    pub name: String,
+    pub surname: String,
+    pub access_code: i32,
+    pub accounting_day: i32,
+}

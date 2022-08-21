@@ -12,3 +12,9 @@ pub struct Vacation {
     pub end_date: NaiveDate,
     pub title: String,
 }
+
+pub struct NewVacation {
+    pub start_date: NaiveDate,
+    pub end_date: NaiveDate,
+    pub title: String,
+}

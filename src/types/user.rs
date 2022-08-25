@@ -1,8 +1,9 @@
 use crate::schema::users;
 use diesel::{self, Queryable};
+use rocket::serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Queryable, Insertable, Debug)]
+#[derive(Queryable, Insertable, Debug, Deserialize, Serialize)]
 #[table_name = "users"]
 pub struct User {
     pub id: Uuid,

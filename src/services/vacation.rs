@@ -1,9 +1,7 @@
-use crate::repos::vacation as VacationRepo;
+use crate::repos::VacationRepo;
 use crate::services::transition as TransitionService;
 use crate::services::user as UserService;
-use crate::types::stats::Stats;
-use crate::types::transition::Transition;
-use crate::types::vacation::{NewVacation, Vacation};
+use crate::types::{vacation::NewVacation, Stats, Transition, Vacation};
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
 use uuid::Uuid;

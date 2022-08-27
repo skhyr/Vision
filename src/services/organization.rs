@@ -1,7 +1,5 @@
-use crate::repos::user as UserRepo;
-use crate::repos::vacation as VacationRepo;
-use crate::types::user::{NewUser, User};
-use crate::types::vacation::Vacation;
+use crate::repos::{UserRepo, VacationRepo};
+use crate::types::{user::NewUser, User, Vacation};
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
 use uuid::Uuid;

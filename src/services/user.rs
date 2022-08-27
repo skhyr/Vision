@@ -1,10 +1,7 @@
 use crate::repos::vacation as VacationRepo;
 use crate::services::calculator as Calculator;
 use crate::services::transition as TransitionService;
-use crate::types::info::Info;
-use crate::types::stats::Stats;
-use crate::types::transition::Transition;
-use crate::types::vacation::Vacation;
+use crate::types::{Info, Stats, Transition, Vacation};
 use crate::utils::errors::Errors;
 use diesel::pg::PgConnection;
 use uuid::Uuid;

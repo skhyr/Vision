@@ -1,5 +1,5 @@
 use crate::schema::transitions;
-use crate::types::transition::Transition;
+use crate::types::Transition;
 use crate::utils::errors::Errors;
 use diesel::prelude::*;
 use diesel::{self, PgConnection};

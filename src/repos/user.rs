@@ -1,5 +1,5 @@
 use crate::schema::users;
-use crate::types::user::User;
+use crate::types::User;
 use crate::utils::errors::Errors;
 use diesel::prelude::*;
 use diesel::{self, PgConnection};

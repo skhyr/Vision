@@ -1,4 +1,4 @@
-use crate::repos::transition as TransitionRepo;
+use crate::repos::TransitionRepo;
 use crate::types::transition::{NewTransition, Transition};
 use crate::utils::errors::Errors;
 use chrono::Datelike;

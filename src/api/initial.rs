@@ -30,5 +30,5 @@ pub fn init_routes() -> Rocket<rocket::Build> {
 
     rocket::custom(config)
         .attach(DbConn::fairing())
-        .mount("/user", queries::get_routes())
+        .mount("/", queries::get_routes())
 }

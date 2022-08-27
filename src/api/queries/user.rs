@@ -7,7 +7,7 @@ use rocket::serde::json::Json;
 use rocket::{get, routes, Route};
 use uuid::Uuid;
 
-#[get("/info/<id>", rank = 1)]
+#[get("/user/info/<id>", rank = 1)]
 async fn get_info(id: String, conn: DbConn) -> Result<Json<Info>, status::BadRequest<()>> {
     conn.run(move |c| {
         let user_id = Uuid::parse_str(id.as_str())
@@ -21,7 +21,7 @@ async fn get_info(id: String, conn: DbConn) -> Result<Json<Info>, status::BadReq
     .await
 }
 
-#[get("/<id>", rank = 2)]
+#[get("/user/<id>", rank = 2)]
 async fn get_user(id: String, conn: DbConn) -> Result<Json<User>, status::BadRequest<()>> {
     conn.run(move |c| {
         let user_id = Uuid::parse_str(id.as_str())

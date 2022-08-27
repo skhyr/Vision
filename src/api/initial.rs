@@ -1,5 +1,4 @@
-use crate::repos::user as UserRepo;
-use crate::types::user::User;
+use crate::api::queries;
 use dotenv::dotenv;
 use rocket::config::Config;
 use rocket::figment::Figment;
@@ -7,7 +6,6 @@ use rocket::figment::{
     util::map,
     value::{Map, Value},
 };
-use rocket::serde::json::Json;
 use rocket::Rocket;
 use rocket_sync_db_pools::{database, diesel};
 
@@ -32,15 +30,5 @@ pub fn init_routes() -> Rocket<rocket::Build> {
 
     rocket::custom(config)
         .attach(DbConn::fairing())
-        .mount("/", routes![index, all_users])
-}
-
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
-
-#[get("/users")]
-async fn all_users(conn: DbConn) -> Json<Vec<User>> {
-    conn.run(|c| Json(UserRepo::get_all(c).unwrap())).await
+        .mount("/user", queries::get_routes())
 }

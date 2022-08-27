@@ -79,5 +79,9 @@ pub fn count_days_left(
 ) -> Result<f64, Errors> {
     let generated = count_generated_hours(transitions)?;
     let used = count_used_hours(vacations, transitions)?;
-    Ok((generated - used) / (transitions[0].fraction * 8.0))
+    let current_fraction = match transitions.get(0) {
+        Some(t) => t.fraction,
+        None => 1.0,
+    };
+    Ok((generated - used) / (current_fraction * 8.0))
 }

@@ -4,4 +4,5 @@ pub enum Errors {
     QueryFailed,
     Unauthorized,
     InvalidVacationFound,
+    InvalidId,
 }

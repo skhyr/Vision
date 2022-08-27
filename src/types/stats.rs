@@ -1,4 +1,6 @@
-#[derive(Debug)]
+use rocket::serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Stats {
     pub generated_hours: f64,
     pub used_hours: f64,

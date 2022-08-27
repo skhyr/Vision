@@ -14,6 +14,7 @@ pub struct User {
     pub organization_id: Uuid,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct NewUser {
     pub name: String,
     pub surname: String,

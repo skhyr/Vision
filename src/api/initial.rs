@@ -1,3 +1,4 @@
+use crate::api::mutations;
 use crate::api::queries;
 use dotenv::dotenv;
 use rocket::config::Config;
@@ -46,4 +47,5 @@ pub fn init_routes() -> Rocket<rocket::Build> {
         .attach(DbConn::fairing())
         .attach(cors)
         .mount("/", queries::get_routes())
+        .mount("/", mutations::get_routes())
 }

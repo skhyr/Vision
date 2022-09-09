@@ -6,6 +6,7 @@ extern crate rocket;
 
 pub mod api;
 pub mod repos;
+pub mod resolvers;
 pub mod schema;
 pub mod services;
 pub mod types;

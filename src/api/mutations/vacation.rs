@@ -1,10 +1,9 @@
 use crate::api::DbConn;
-use crate::services::vacation as VacationService;
-use crate::types::{vacation::NewVacation, Stats, Vacation};
+use crate::resolvers::vacation;
+use crate::types::vacation::{NewVacation, Vacation};
 use rocket::response::status;
 use rocket::serde::json::Json;
 use rocket::{routes, Route};
-use uuid::Uuid;
 
 #[post(
     "/vacation/add/<user_id>",
@@ -18,12 +17,9 @@ async fn add_vacation(
     body: Json<NewVacation>,
 ) -> Result<Json<Vacation>, status::BadRequest<()>> {
     conn.run(move |c| {
-        let parsed_user_id = Uuid::parse_str(user_id.as_str())
-            .map_err(|_| status::BadRequest(Some("Invalid Id")))
-            .unwrap();
         let new_vacation = body.into_inner();
 
-        VacationService::add(new_vacation, parsed_user_id, &c)
+        vacation::add_vacation(new_vacation, user_id, &c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })

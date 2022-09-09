@@ -11,3 +11,4 @@ pub use stats::Stats;
 pub use transition::Transition;
 pub use user::User;
 pub use vacation::Vacation;
+pub use vacation::VacationStats;

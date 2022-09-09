@@ -1,5 +1,5 @@
 use crate::services::date as DateService;
-use crate::types::{Transition, Vacation};
+use crate::types::{vacation::VacationStats, Transition, Vacation};
 use crate::utils::errors::Errors;
 use chrono::Datelike;
 
@@ -26,6 +26,10 @@ pub fn pair_transitions_with_vacations<'a>(
                 .map(|transition| (vacation, transition))
         })
         .collect()
+}
+
+pub fn get_vacation_length(vacation: &Vacation) -> i32 {
+    DateService::count_days_between(vacation.start_date, vacation.end_date)
 }
 
 pub fn count_used_hours(

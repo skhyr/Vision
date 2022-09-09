@@ -20,3 +20,9 @@ pub struct NewVacation {
     pub end_date: NaiveDate,
     pub title: String,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct VacationStats {
+    pub hours: f64,
+    pub days: f64,
+}

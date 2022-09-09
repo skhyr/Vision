@@ -3,7 +3,7 @@ use crate::services::calculator as Calculator;
 use crate::services::transition as TransitionService;
 use crate::types::{
     vacation::{NewVacation, VacationStats},
-    Transition, Vacation,
+    ComputedVacation, Transition, Vacation,
 };
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
@@ -21,9 +21,12 @@ pub fn get_vacation_stats(
     })
 }
 
-pub fn get_calc_vacation(vacation: Vacation, conn: &PgConnection) -> Result<VacationStats, Errors> {
+pub fn gen_vacation_stats(
+    vacation: &Vacation,
+    conn: &PgConnection,
+) -> Result<VacationStats, Errors> {
     let transitions = TransitionService::get_sorted_transitions(vacation.user_id, conn)?;
-    get_vacation_stats(&vacation, &transitions)
+    get_vacation_stats(vacation, &transitions)
 }
 
 pub fn add(
@@ -39,4 +42,17 @@ pub fn add(
         end_date: new_vacation.end_date,
     };
     VacationRepo::insert(vacation, conn)
+}
+
+pub fn get_computed_vacation(id: Uuid, conn: &PgConnection) -> Result<ComputedVacation, Errors> {
+    let vacation = VacationRepo::get_by_id(id, conn)?;
+    let stats = gen_vacation_stats(&vacation, conn)?;
+    Ok(ComputedVacation {
+        vacation_id: id,
+        title: vacation.title,
+        start_date: vacation.start_date,
+        end_date: vacation.end_date,
+        hours: stats.hours,
+        days: stats.days,
+    })
 }

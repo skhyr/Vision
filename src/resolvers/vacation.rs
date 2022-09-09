@@ -1,5 +1,6 @@
 use crate::services::vacation as VacationService;
 use crate::types::vacation::{NewVacation, Vacation, VacationStats};
+use crate::types::ComputedVacation;
 use crate::utils;
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
@@ -20,8 +21,17 @@ pub fn calc_vacation(
         end_date: new_vacation.end_date,
     };
 
-    VacationService::get_calc_vacation(vacation, conn)
+    VacationService::gen_vacation_stats(&vacation, conn)
 }
+
+pub fn get_computed_vacation(
+    vacation_id: String,
+    conn: &PgConnection,
+) -> Result<ComputedVacation, Errors> {
+    let vacation_uuid = utils::parse_uuid(vacation_id)?;
+    VacationService::get_computed_vacation(vacation_uuid, conn)
+}
+
 pub fn add_vacation(
     new_vacation: NewVacation,
     user_id: String,

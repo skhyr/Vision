@@ -1,3 +1,4 @@
+pub mod computedVacation;
 pub mod info;
 pub mod organization;
 pub mod stats;
@@ -5,6 +6,7 @@ pub mod transition;
 pub mod user;
 pub mod vacation;
 
+pub use computedVacation::ComputedVacation;
 pub use info::Info;
 pub use organization::Organization;
 pub use stats::Stats;

@@ -18,7 +18,7 @@ async fn get_calc(
     conn.run(move |c| {
         vacation::calc_vacation(body.into_inner(), user_id, c)
             .map(|r| Json(r))
-            .map_err(|e| status::BadRequest(None))
+            .map_err(|_| status::BadRequest(None))
     })
     .await
 }

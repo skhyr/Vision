@@ -1,5 +1,5 @@
 use crate::services::date as DateService;
-use crate::types::{vacation::VacationStats, Transition, Vacation};
+use crate::types::{Transition, Vacation};
 use crate::utils::errors::Errors;
 use chrono::Datelike;
 

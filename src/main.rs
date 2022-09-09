@@ -1,14 +1,14 @@
 #[macro_use]
 extern crate rocket;
 use lib::api::initial::init_routes;
-use lib::repos::{TransitionRepo, VacationRepo};
+/* use lib::repos::{TransitionRepo, VacationRepo};
 use lib::services::{organization, transition, vacation};
 use lib::types::{transition::NewTransition, user::NewUser, vacation::NewVacation, Vacation};
-use lib::utils::establish_connection::establish_connection;
+use lib::utils::establish_connection::establish_connection; */
 
 #[launch]
 fn rocket() -> _ {
-    let conn = establish_connection();
+    /* let conn = establish_connection();
     let user_id = uuid::Uuid::parse_str("31b67891-d7e0-49ab-bdf3-f3f7d24bdb86").unwrap();
     let organization_id = uuid::Uuid::parse_str("e795b831-db6e-429e-b47a-a3c600ad3fa5").unwrap();
 
@@ -30,7 +30,7 @@ fn rocket() -> _ {
         surname: "Samuś".into(),
         accounting_day: 1,
         access_code: 4200,
-    };
+    }; */
 
     // organization::add_user(new_user, organization_id, &conn);
 

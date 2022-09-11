@@ -1,5 +1,5 @@
 use crate::utils::errors::Errors;
-use chrono::{Datelike, NaiveDate, Utc};
+use chrono::{Datelike, NaiveDate, Utc, Weekday};
 
 pub fn get_now_as_transition_date() -> Result<NaiveDate, Errors> {
     let now = Utc::now().date_naive();
@@ -17,6 +17,18 @@ pub fn num_months_between(date1: NaiveDate, date2: NaiveDate) -> i32 {
     num_years * 12 + num_months as i32
 }
 
+pub fn is_workday(date: &NaiveDate) -> bool {
+    match date.weekday() {
+        Weekday::Sat => false,
+        Weekday::Sun => false,
+        _ => true,
+    }
+}
+
 pub fn count_days_between(start_date: NaiveDate, end_date: NaiveDate) -> i32 {
-    end_date.num_days_from_ce() - start_date.num_days_from_ce() + 1
+    start_date
+        .iter_days()
+        .take_while(|d| d <= &end_date)
+        .filter(is_workday)
+        .count() as i32
 }

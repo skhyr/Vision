@@ -1,6 +1,6 @@
+use crate::logic::calculator as Calculator;
+use crate::logic::date as DateService;
 use crate::repos::UserRepo;
-use crate::services::calculator as Calculator;
-use crate::services::date as DateService;
 use crate::services::{transition, vacation};
 use crate::types::{Config, Initials};
 use crate::types::{Info, Stats, Transition, Vacation};
@@ -29,7 +29,7 @@ pub fn get_config(user_id: Uuid, conn: &PgConnection) -> Result<Config, Errors> 
 pub fn get_info(
     vacations: Vec<Vacation>,
     transitions: Vec<Transition>,
-    conn: &PgConnection,
+    _conn: &PgConnection,
 ) -> Result<Info, Errors> {
     Ok(Info {
         stats: get_stats(&vacations, &transitions)?,

@@ -1,5 +1,5 @@
+use crate::logic::calculator as Calculator;
 use crate::repos::VacationRepo;
-use crate::services::calculator as Calculator;
 use crate::services::transition as TransitionService;
 use crate::types::{
     vacation::{NewVacation, VacationStats},

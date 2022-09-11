@@ -5,6 +5,7 @@ extern crate diesel;
 extern crate rocket;
 
 pub mod api;
+pub mod logic;
 pub mod repos;
 pub mod resolvers;
 pub mod schema;

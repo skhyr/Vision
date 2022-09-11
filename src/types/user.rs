@@ -3,7 +3,7 @@ use diesel::{self, Queryable};
 use rocket::serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Queryable, Insertable, Debug, Deserialize, Serialize)]
+#[derive(Queryable, Insertable, Debug, Deserialize, Clone)]
 #[table_name = "users"]
 pub struct User {
     pub id: Uuid,

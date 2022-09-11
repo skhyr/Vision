@@ -56,3 +56,7 @@ pub fn get_computed_vacation(id: Uuid, conn: &PgConnection) -> Result<ComputedVa
         days: stats.days,
     })
 }
+
+pub fn get_user_vacations(user_id: Uuid, conn: &PgConnection) -> Result<Vec<Vacation>, Errors> {
+    VacationRepo::get_by_user_id(user_id, conn)
+}

@@ -7,6 +7,10 @@ pub fn get_now_as_transition_date() -> Result<NaiveDate, Errors> {
     Ok(NaiveDate::from_ymd(now.year(), now.month(), 1))
 }
 
+pub fn get_now() -> NaiveDate {
+    Utc::now().date_naive()
+}
+
 pub fn num_months_between(date1: NaiveDate, date2: NaiveDate) -> i32 {
     let num_years = date2.year() - date1.year();
     let num_months = date2.month() as i32 - date1.month() as i32;

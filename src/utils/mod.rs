@@ -1,3 +1,4 @@
+pub mod countries;
 pub mod errors;
 pub mod establish_connection;
 pub mod parse;

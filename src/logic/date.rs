@@ -1,10 +1,15 @@
+use crate::types::Config;
 use crate::utils::errors::Errors;
 use chrono::{Datelike, NaiveDate, Utc, Weekday};
 
-pub fn get_now_as_transition_date() -> Result<NaiveDate, Errors> {
+pub fn get_now_as_transition_date(config: &Config) -> Result<NaiveDate, Errors> {
     let now = Utc::now().date_naive();
-    // TODO implement logic to handle accounting_day
-    Ok(NaiveDate::from_ymd(now.year(), now.month(), 1))
+    let day: u32 = config
+        .accounting_day
+        .try_into()
+        .map_err(|_| Errors::InvalidDate)?;
+
+    NaiveDate::from_ymd_opt(now.year(), now.month(), day).ok_or(Errors::InvalidDate)
 }
 
 pub fn get_now() -> NaiveDate {

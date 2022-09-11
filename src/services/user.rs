@@ -29,10 +29,10 @@ pub fn get_config(user_id: Uuid, conn: &PgConnection) -> Result<Config, Errors> 
 pub fn get_info(
     vacations: Vec<Vacation>,
     transitions: Vec<Transition>,
-    _conn: &PgConnection,
+    config: &Config,
 ) -> Result<Info, Errors> {
     Ok(Info {
-        stats: get_stats(&vacations, &transitions)?,
+        stats: get_stats(&vacations, &transitions, config)?,
         vacations: vacations,
         transitions: transitions,
     })
@@ -41,12 +41,13 @@ pub fn get_info(
 pub fn get_stats(
     vacations: &Vec<Vacation>,
     transitions: &Vec<Transition>,
+    config: &Config,
 ) -> Result<Stats, Errors> {
     Ok(Stats {
-        generated_hours: Calculator::count_generated_hours(transitions)?,
+        generated_hours: Calculator::count_generated_hours(transitions, config)?,
         used_hours: Calculator::count_used_hours(vacations, transitions)?,
         used_days: Calculator::count_used_days(vacations)?,
-        hours_left: Calculator::count_hours_left(vacations, transitions)?,
-        days_left: Calculator::count_days_left(vacations, transitions)?,
+        hours_left: Calculator::count_hours_left(vacations, transitions, config)?,
+        days_left: Calculator::count_days_left(vacations, transitions, config)?,
     })
 }

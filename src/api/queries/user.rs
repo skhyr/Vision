@@ -13,10 +13,10 @@ async fn get_info(id: String, conn: DbConn) -> Result<Json<Info>, status::BadReq
         let user_id = Uuid::parse_str(id.as_str())
             .map_err(|_| status::BadRequest(Some("Invalid Id")))
             .unwrap();
-        let Initials(vacations, transitions, _) =
+        let Initials(vacations, transitions, config) =
             user::get_initials(user_id, c).map_err(|_| status::BadRequest(None))?;
 
-        user::get_info(vacations, transitions, c)
+        user::get_info(vacations, transitions, &config)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })

@@ -1,5 +1,5 @@
 use crate::logic::date as DateService;
-use crate::types::{Transition, Vacation};
+use crate::types::{Config, Transition, Vacation};
 use crate::utils::errors::Errors;
 use chrono::Datelike;
 
@@ -56,8 +56,11 @@ pub fn count_used_days(vacations: &Vec<Vacation>) -> Result<f64, Errors> {
         .fold(0.0, |acc, len| acc + len))
 }
 
-pub fn count_generated_hours(transitions: &Vec<Transition>) -> Result<f64, Errors> {
-    let now = DateService::get_now_as_transition_date()?;
+pub fn count_generated_hours(
+    transitions: &Vec<Transition>,
+    config: &Config,
+) -> Result<f64, Errors> {
+    let now = DateService::get_now_as_transition_date(config)?;
     let (res, _) = transitions
         .iter()
         .fold((0.0, now), |(acc, prev_date), transition| {
@@ -71,8 +74,9 @@ pub fn count_generated_hours(transitions: &Vec<Transition>) -> Result<f64, Error
 pub fn count_hours_left(
     vacations: &Vec<Vacation>,
     transitions: &Vec<Transition>,
+    config: &Config,
 ) -> Result<f64, Errors> {
-    let generated = count_generated_hours(transitions)?;
+    let generated = count_generated_hours(transitions, config)?;
     let used = count_used_hours(vacations, transitions)?;
     Ok(generated - used)
 }
@@ -80,8 +84,9 @@ pub fn count_hours_left(
 pub fn count_days_left(
     vacations: &Vec<Vacation>,
     transitions: &Vec<Transition>,
+    config: &Config,
 ) -> Result<f64, Errors> {
-    let generated = count_generated_hours(transitions)?;
+    let generated = count_generated_hours(transitions, config)?;
     let used = count_used_hours(vacations, transitions)?;
     let current_fraction = match transitions.get(0) {
         Some(t) => t.fraction,

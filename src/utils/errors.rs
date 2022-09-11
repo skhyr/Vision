@@ -5,4 +5,5 @@ pub enum Errors {
     Unauthorized,
     InvalidVacationFound,
     InvalidId,
+    InvalidDate,
 }

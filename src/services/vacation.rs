@@ -1,9 +1,10 @@
 use crate::logic::calculator as Calculator;
 use crate::repos::VacationRepo;
 use crate::services::transition as TransitionService;
+use crate::services::user as UserService;
 use crate::types::{
     vacation::{NewVacation, VacationStats},
-    ComputedVacation, Transition, Vacation,
+    ComputedVacation, Config, Transition, Vacation,
 };
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
@@ -12,12 +13,13 @@ use uuid::Uuid;
 pub fn get_vacation_stats(
     vacation: &Vacation,
     transitions: &Vec<Transition>,
+    config: &Config,
 ) -> Result<VacationStats, Errors> {
     let len = Calculator::get_vacation_length(vacation);
     let transition = Calculator::match_transition_to_vacation(vacation, transitions)?;
     Ok(VacationStats {
         days: len as f64,
-        hours: len as f64 * 8.0 * transition.fraction,
+        hours: len as f64 * config.full_time_h * transition.fraction,
     })
 }
 
@@ -27,7 +29,8 @@ pub fn get_computed_vacation(
 ) -> Result<ComputedVacation, Errors> {
     let vacation = VacationRepo::get_by_id(vacation_id, conn)?;
     let transitions = TransitionService::get_sorted_transitions(vacation.user_id, conn)?;
-    let stats = get_vacation_stats(&vacation, &transitions)?;
+    let config = UserService::get_config(vacation.user_id, conn)?;
+    let stats = get_vacation_stats(&vacation, &transitions, &config)?;
     Ok(ComputedVacation {
         vacation_id,
         title: vacation.title,

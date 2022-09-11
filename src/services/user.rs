@@ -23,6 +23,8 @@ pub fn get_config(user_id: Uuid, conn: &PgConnection) -> Result<Config, Errors> 
         accounting_day: user.accounting_day,
         country: Countries::PL,
         date: DateService::get_now(),
+        full_time_h: 8.0,
+        monthly_gen_days: 1.75,
     })
 }
 
@@ -45,7 +47,7 @@ pub fn get_stats(
 ) -> Result<Stats, Errors> {
     Ok(Stats {
         generated_hours: Calculator::count_generated_hours(transitions, config)?,
-        used_hours: Calculator::count_used_hours(vacations, transitions)?,
+        used_hours: Calculator::count_used_hours(vacations, transitions, config)?,
         used_days: Calculator::count_used_days(vacations)?,
         hours_left: Calculator::count_hours_left(vacations, transitions, config)?,
         days_left: Calculator::count_days_left(vacations, transitions, config)?,

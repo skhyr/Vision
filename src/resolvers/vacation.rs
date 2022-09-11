@@ -19,8 +19,8 @@ pub fn calc_vacation(
         start_date: new_vacation.start_date,
         end_date: new_vacation.end_date,
     };
-    let Initials(_, transitions, _) = user::get_initials(user_uuid, conn)?;
-    vacation::get_vacation_stats(&vacation, &transitions)
+    let Initials(_, transitions, config) = user::get_initials(user_uuid, conn)?;
+    vacation::get_vacation_stats(&vacation, &transitions, &config)
 }
 
 pub fn get_computed_vacation(

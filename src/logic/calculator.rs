@@ -35,13 +35,14 @@ pub fn get_vacation_length(vacation: &Vacation) -> i32 {
 pub fn count_used_hours(
     vacations: &Vec<Vacation>,
     transitions: &Vec<Transition>,
+    config: &Config,
 ) -> Result<f64, Errors> {
     pair_transitions_with_vacations(&vacations, &transitions).map(|vec| {
         vec.iter()
             .map(|(vacation, transition)| {
                 let vacation_length =
                     DateService::count_days_between(vacation.start_date, vacation.end_date);
-                vacation_length as f64 * transition.fraction * 8.0
+                vacation_length as f64 * transition.fraction * config.full_time_h
             })
             .fold(0.0, |acc, len| acc + len)
     })
@@ -65,7 +66,8 @@ pub fn count_generated_hours(
         .iter()
         .fold((0.0, now), |(acc, prev_date), transition| {
             let duration = DateService::num_months_between(transition.date, prev_date) as f64;
-            let gen_hours = 1.75 * 8.0 * duration * transition.fraction;
+            let gen_hours =
+                config.monthly_gen_days * config.full_time_h * duration * transition.fraction;
             (acc + gen_hours, transition.date)
         });
     Ok(res)
@@ -77,7 +79,7 @@ pub fn count_hours_left(
     config: &Config,
 ) -> Result<f64, Errors> {
     let generated = count_generated_hours(transitions, config)?;
-    let used = count_used_hours(vacations, transitions)?;
+    let used = count_used_hours(vacations, transitions, config)?;
     Ok(generated - used)
 }
 
@@ -87,7 +89,7 @@ pub fn count_days_left(
     config: &Config,
 ) -> Result<f64, Errors> {
     let generated = count_generated_hours(transitions, config)?;
-    let used = count_used_hours(vacations, transitions)?;
+    let used = count_used_hours(vacations, transitions, config)?;
     let current_fraction = match transitions.get(0) {
         Some(t) => t.fraction,
         None => 1.0,

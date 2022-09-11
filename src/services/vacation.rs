@@ -21,12 +21,25 @@ pub fn get_vacation_stats(
     })
 }
 
-pub fn gen_vacation_stats(
-    vacation: &Vacation,
+pub fn get_computed_vacation(
+    vacation_id: Uuid,
     conn: &PgConnection,
-) -> Result<VacationStats, Errors> {
+) -> Result<ComputedVacation, Errors> {
+    let vacation = VacationRepo::get_by_id(vacation_id, conn)?;
     let transitions = TransitionService::get_sorted_transitions(vacation.user_id, conn)?;
-    get_vacation_stats(vacation, &transitions)
+    let stats = get_vacation_stats(&vacation, &transitions)?;
+    Ok(ComputedVacation {
+        vacation_id,
+        title: vacation.title,
+        start_date: vacation.start_date,
+        end_date: vacation.end_date,
+        hours: stats.hours,
+        days: stats.days,
+    })
+}
+
+pub fn get_user_vacations(user_id: Uuid, conn: &PgConnection) -> Result<Vec<Vacation>, Errors> {
+    VacationRepo::get_by_user_id(user_id, conn)
 }
 
 pub fn add(
@@ -42,21 +55,4 @@ pub fn add(
         end_date: new_vacation.end_date,
     };
     VacationRepo::insert(vacation, conn)
-}
-
-pub fn get_computed_vacation(id: Uuid, conn: &PgConnection) -> Result<ComputedVacation, Errors> {
-    let vacation = VacationRepo::get_by_id(id, conn)?;
-    let stats = gen_vacation_stats(&vacation, conn)?;
-    Ok(ComputedVacation {
-        vacation_id: id,
-        title: vacation.title,
-        start_date: vacation.start_date,
-        end_date: vacation.end_date,
-        hours: stats.hours,
-        days: stats.days,
-    })
-}
-
-pub fn get_user_vacations(user_id: Uuid, conn: &PgConnection) -> Result<Vec<Vacation>, Errors> {
-    VacationRepo::get_by_user_id(user_id, conn)
 }

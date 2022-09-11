@@ -1,7 +1,7 @@
 use crate::api::DbConn;
 use crate::repos::UserRepo;
-use crate::services::user as UserService;
-use crate::types::{Info, User};
+use crate::services::user;
+use crate::types::{Info, Initials, User};
 use rocket::response::status;
 use rocket::serde::json::Json;
 use rocket::{get, routes, Route};
@@ -13,8 +13,10 @@ async fn get_info(id: String, conn: DbConn) -> Result<Json<Info>, status::BadReq
         let user_id = Uuid::parse_str(id.as_str())
             .map_err(|_| status::BadRequest(Some("Invalid Id")))
             .unwrap();
+        let Initials(vacations, transitions, _) =
+            user::get_initials(user_id, c).map_err(|_| status::BadRequest(None))?;
 
-        UserService::get_info(user_id, c)
+        user::get_info(vacations, transitions, c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })

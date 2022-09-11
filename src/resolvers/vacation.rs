@@ -1,6 +1,6 @@
-use crate::services::vacation as VacationService;
+use crate::services::{user, vacation};
 use crate::types::vacation::{NewVacation, Vacation, VacationStats};
-use crate::types::ComputedVacation;
+use crate::types::{ComputedVacation, Initials};
 use crate::utils;
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
@@ -12,7 +12,6 @@ pub fn calc_vacation(
     conn: &PgConnection,
 ) -> Result<VacationStats, Errors> {
     let user_uuid = utils::parse_uuid(user_id)?;
-
     let vacation = Vacation {
         id: Uuid::new_v4(),
         user_id: user_uuid,
@@ -20,8 +19,8 @@ pub fn calc_vacation(
         start_date: new_vacation.start_date,
         end_date: new_vacation.end_date,
     };
-
-    VacationService::gen_vacation_stats(&vacation, conn)
+    let Initials(_, transitions, _) = user::get_initials(user_uuid, conn)?;
+    vacation::get_vacation_stats(&vacation, &transitions)
 }
 
 pub fn get_computed_vacation(
@@ -29,7 +28,7 @@ pub fn get_computed_vacation(
     conn: &PgConnection,
 ) -> Result<ComputedVacation, Errors> {
     let vacation_uuid = utils::parse_uuid(vacation_id)?;
-    VacationService::get_computed_vacation(vacation_uuid, conn)
+    vacation::get_computed_vacation(vacation_uuid, conn)
 }
 
 pub fn add_vacation(
@@ -39,5 +38,5 @@ pub fn add_vacation(
 ) -> Result<Vacation, Errors> {
     let user_uuid = utils::parse_uuid(user_id)?;
 
-    VacationService::add(new_vacation, user_uuid, conn)
+    vacation::add(new_vacation, user_uuid, conn)
 }

@@ -1,3 +1,4 @@
+use crate::services::authorization;
 use crate::services::{user, vacation};
 use crate::types::vacation::{NewVacation, Vacation, VacationStats};
 use crate::types::{ComputedVacation, Initials};
@@ -25,18 +26,23 @@ pub fn calc_vacation(
 
 pub fn get_computed_vacation(
     vacation_id: String,
+    token: Token,
     conn: &PgConnection,
 ) -> Result<ComputedVacation, Errors> {
     let vacation_uuid = utils::parse_uuid(vacation_id)?;
-    vacation::get_computed_vacation(vacation_uuid, conn)
+    let user = authorization::auth_user(token, conn);
+    match vacation::get_computed_vacation(vacation_uuid, conn)? {
+        
+    }
 }
 
 pub fn add_vacation(
     new_vacation: NewVacation,
     user_id: String,
+    token: Token,
     conn: &PgConnection,
 ) -> Result<Vacation, Errors> {
     let user_uuid = utils::parse_uuid(user_id)?;
-
+    authorization::auth_org_user(user_uuid, token, conn)?;
     vacation::add(new_vacation, user_uuid, conn)
 }

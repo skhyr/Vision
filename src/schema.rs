@@ -2,6 +2,7 @@ table! {
     organizations (id) {
         id -> Uuid,
         name -> Varchar,
+        access_code -> Int4,
     }
 }
 

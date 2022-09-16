@@ -8,4 +8,5 @@ use uuid::Uuid;
 pub struct Organization {
     pub id: Uuid,
     pub name: String,
+    pub access_code: i32,
 }

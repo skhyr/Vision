@@ -12,6 +12,7 @@ chrono = {version = "0.4", features = ["serde"] }
 dotenv = "0.15.0"
 rocket = { version = "0.5.0-rc.2", features = ["json", "uuid"] }
 rocket_cors = { git = "https://github.com/lawliet89/rocket_cors", branch = "master" }
+async-trait = "0.1.57"
 
 [dependencies.rocket_sync_db_pools]
 version = "0.1.0-rc.2"

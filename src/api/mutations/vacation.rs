@@ -1,6 +1,7 @@
 use crate::api::DbConn;
 use crate::resolvers::vacation;
 use crate::types::vacation::{NewVacation, Vacation};
+use crate::types::Token;
 use rocket::response::status;
 use rocket::serde::json::Json;
 use rocket::{routes, Route};
@@ -13,13 +14,14 @@ use rocket::{routes, Route};
 )]
 async fn add_vacation(
     user_id: String,
+    token: Token,
     conn: DbConn,
     body: Json<NewVacation>,
 ) -> Result<Json<Vacation>, status::BadRequest<()>> {
     conn.run(move |c| {
         let new_vacation = body.into_inner();
 
-        vacation::add_vacation(new_vacation, user_id, &c)
+        vacation::add_vacation(new_vacation, user_id, token, &c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })

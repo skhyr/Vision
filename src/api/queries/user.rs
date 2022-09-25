@@ -1,22 +1,28 @@
 use crate::api::DbConn;
-use crate::repos::UserRepo;
-use crate::services::user;
-use crate::types::{Info, Initials, User};
+use crate::resolvers::user;
+use crate::types::{Info, Token, User};
 use rocket::response::status;
 use rocket::serde::json::Json;
 use rocket::{get, routes, Route};
-use uuid::Uuid;
 
-#[get("/user/info/<id>", rank = 1)]
-async fn get_info(id: String, conn: DbConn) -> Result<Json<Info>, status::BadRequest<()>> {
+#[get("/user/info/<id>", rank = 4)]
+async fn get_info(
+    id: String,
+    token: Token,
+    conn: DbConn,
+) -> Result<Json<Info>, status::BadRequest<()>> {
     conn.run(move |c| {
-        let user_id = Uuid::parse_str(id.as_str())
-            .map_err(|_| status::BadRequest(Some("Invalid Id")))
-            .unwrap();
-        let Initials(vacations, transitions, config) =
-            user::get_initials(user_id, c).map_err(|_| status::BadRequest(None))?;
+        user::get_info(token, id, c)
+            .map(|r| Json(r))
+            .map_err(|_| status::BadRequest(None))
+    })
+    .await
+}
 
-        user::get_info(vacations, transitions, &config)
+#[get("/user/info/me", rank = 3)]
+async fn get_my_info(token: Token, conn: DbConn) -> Result<Json<Info>, status::BadRequest<()>> {
+    conn.run(move |c| {
+        user::get_my_info(token, c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })
@@ -24,13 +30,23 @@ async fn get_info(id: String, conn: DbConn) -> Result<Json<Info>, status::BadReq
 }
 
 #[get("/user/<id>", rank = 2)]
-async fn get_user(id: String, conn: DbConn) -> Result<Json<User>, status::BadRequest<()>> {
+async fn get_user(
+    id: String,
+    token: Token,
+    conn: DbConn,
+) -> Result<Json<User>, status::BadRequest<()>> {
     conn.run(move |c| {
-        let user_id = Uuid::parse_str(id.as_str())
-            .map_err(|_| status::BadRequest(Some("Invalid Id")))
-            .unwrap();
+        user::get_user(token, id, c)
+            .map(|r| Json(r))
+            .map_err(|_| status::BadRequest(None))
+    })
+    .await
+}
 
-        UserRepo::get_by_id(user_id, c)
+#[get("/user/me", rank = 1)]
+async fn get_me(token: Token, conn: DbConn) -> Result<Json<User>, status::BadRequest<()>> {
+    conn.run(move |c| {
+        user::get_me(token, c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })
@@ -38,5 +54,5 @@ async fn get_user(id: String, conn: DbConn) -> Result<Json<User>, status::BadReq
 }
 
 pub fn get_routes() -> Vec<Route> {
-    routes![get_info, get_user]
+    routes![get_info, get_my_info, get_user, get_me]
 }

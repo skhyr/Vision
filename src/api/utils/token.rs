@@ -17,8 +17,8 @@ impl<'r> FromRequest<'r> for Token {
     // let token = keys[0].to_string();
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let h1 = req.headers().get_one("Authorization-Admin");
-        let h2 = req.headers().get_one("Authorization-User");
+        let h1 = req.headers().get_one("Authenticate-Admin");
+        let h2 = req.headers().get_one("Authenticate-User");
 
         match (h1, h2) {
             (None, None) => Outcome::Failure((Status::BadRequest, Errors::Unauthorized)),

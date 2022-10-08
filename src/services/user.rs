@@ -35,8 +35,8 @@ pub fn get_info(
 ) -> Result<Info, Errors> {
     Ok(Info {
         stats: get_stats(&vacations, &transitions, config)?,
-        vacations: vacations,
-        transitions: transitions,
+        vacations,
+        transitions,
     })
 }
 

@@ -1,18 +1,20 @@
 use crate::api::DbConn;
 use crate::resolvers::user;
 use crate::types::{Info, Token, User};
+use chrono::NaiveDate;
 use rocket::response::status;
 use rocket::serde::json::Json;
 use rocket::{get, routes, Route};
 
-#[get("/user/info/<id>", rank = 4)]
+#[get("/user/info/<id>?<date>", rank = 4)]
 async fn get_info(
     id: String,
     token: Token,
     conn: DbConn,
+    date: Option<String>,
 ) -> Result<Json<Info>, status::BadRequest<()>> {
     conn.run(move |c| {
-        user::get_info(token, id, c)
+        user::get_info(token, id, date, c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })

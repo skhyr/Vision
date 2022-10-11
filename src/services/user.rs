@@ -18,11 +18,10 @@ pub fn get_initials(user_id: Uuid, conn: &PgConnection) -> Result<Initials, Erro
 
 pub fn get_config(user_id: Uuid, conn: &PgConnection) -> Result<Config, Errors> {
     let user = UserRepo::get_by_id(user_id, conn)?;
-
     Ok(Config {
         accounting_day: user.accounting_day,
         country: Countries::PL,
-        date: DateService::get_now(),
+        date: None,
         full_time_h: 8.0,
         monthly_gen_days: 1.75,
     })

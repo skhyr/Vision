@@ -4,7 +4,7 @@ use chrono::NaiveDate;
 
 #[derive(Debug)]
 pub struct Config {
-    pub date: NaiveDate,
+    pub date: Option<NaiveDate>,
     pub accounting_day: i32,
     pub monthly_gen_days: f64,
     pub full_time_h: f64,

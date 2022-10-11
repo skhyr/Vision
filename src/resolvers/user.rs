@@ -2,7 +2,7 @@ use crate::repos::UserRepo;
 use crate::services::authorization::{authorize, AccessLevels::*, AuthObj};
 use crate::services::{organization, user};
 use crate::types::user::NewUser;
-use crate::types::{Info, Initials, Token, User};
+use crate::types::{Config, Info, Initials, Token, User};
 use crate::utils;
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
@@ -27,11 +27,21 @@ pub fn get_me(token: Token, conn: &PgConnection) -> Result<User, Errors> {
 /*
   auth: Co-worker
 */
-pub fn get_info(token: Token, user_id: String, conn: &PgConnection) -> Result<Info, Errors> {
+pub fn get_info(
+    token: Token,
+    user_id: String,
+    date: Option<String>,
+    conn: &PgConnection,
+) -> Result<Info, Errors> {
     let user_uuid = utils::parse_uuid(user_id)?;
     authorize(token, Organization(AuthObj::User(user_uuid)), conn)?;
     let Initials(vacations, transitions, config) = user::get_initials(user_uuid, conn)?;
-    user::get_info(vacations, transitions, &config)
+    let calc_date = utils::parse_date(date)?;
+    let mapped_config = Config {
+        date: calc_date,
+        ..config
+    };
+    user::get_info(vacations, transitions, &mapped_config)
 }
 
 /*

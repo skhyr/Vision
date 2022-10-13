@@ -1,5 +1,6 @@
-use crate::types::Config;
 use crate::utils::errors::Errors;
+use crate::utils::free_days::is_day_free;
+use crate::{types::Config, utils::countries::Countries};
 use chrono::{Datelike, NaiveDate, Utc, Weekday};
 
 pub fn get_now_as_transition_date(config: &Config) -> Result<NaiveDate, Errors> {
@@ -38,6 +39,6 @@ pub fn count_days_between(start_date: NaiveDate, end_date: NaiveDate) -> i32 {
     start_date
         .iter_days()
         .take_while(|d| d <= &end_date)
-        .filter(is_workday)
+        .filter(|d| is_workday(d) && !is_day_free(d, Countries::PL))
         .count() as i32
 }

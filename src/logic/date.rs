@@ -9,7 +9,11 @@ pub fn get_now_as_transition_date(config: &Config) -> Result<NaiveDate, Errors> 
         .try_into()
         .map_err(|_| Errors::InvalidDate)?;
 
-    NaiveDate::from_ymd_opt(now.year(), now.month(), day).ok_or(Errors::InvalidDate)
+    let date = NaiveDate::from_ymd_opt(now.year(), now.month(), day).ok_or(Errors::InvalidDate);
+    match config.date {
+        Some(d) => Ok(d),
+        None => date,
+    }
 }
 
 pub fn get_now() -> NaiveDate {

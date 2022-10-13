@@ -1,7 +1,7 @@
 use crate::repos::TransitionRepo;
 use crate::types::transition::{NewTransition, Transition};
 use crate::utils::errors::Errors;
-use chrono::Datelike;
+use chrono::{Datelike, NaiveDate};
 use diesel::pg::PgConnection;
 use uuid::Uuid;
 
@@ -16,6 +16,18 @@ pub fn get_sorted_transitions(
         bn.cmp(&an)
     });
     Ok(transitions)
+}
+
+pub fn get_filtered_transitions(
+    user_id: Uuid,
+    date: Option<NaiveDate>,
+    conn: &PgConnection,
+) -> Result<Vec<Transition>, Errors> {
+    let transitions = get_sorted_transitions(user_id, conn)?;
+    Ok(match date {
+        None => transitions,
+        Some(d) => transitions.into_iter().filter(|t| t.date < d).collect(),
+    })
 }
 
 pub fn add(

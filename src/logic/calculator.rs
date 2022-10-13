@@ -1,5 +1,5 @@
 use crate::logic::date as DateService;
-use crate::types::{Config, Stats, Transition, User, Vacation};
+use crate::types::{Config, Transition, Vacation};
 use crate::utils::errors::Errors;
 use chrono::Datelike;
 
@@ -15,7 +15,7 @@ pub fn match_transition_to_vacation<'a>(
         .ok_or(Errors::InvalidVacationFound)
 }
 
-pub fn pair_transitions_with_vacations<'a>(
+fn pair_transitions_with_vacations<'a>(
     vacations: &'a Vec<Vacation>,
     transitions: &'a Vec<Transition>,
 ) -> Result<Vec<(&'a Vacation, &'a Transition)>, Errors> {

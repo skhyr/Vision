@@ -1,5 +1,5 @@
 use crate::repos::{OrganizationRepo, UserRepo};
-use crate::types::{Organization, Token, User};
+use crate::types::{Organization, User};
 use crate::utils::Errors;
 use diesel::PgConnection;
 use uuid::Uuid;

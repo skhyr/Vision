@@ -2,6 +2,7 @@ use crate::repos::OrganizationRepo;
 use crate::services::authorization::{authorize, AccessLevels::*, AuthObj};
 use crate::services::organization;
 use crate::types::{Organization, Token, User, Vacation};
+use crate::utils;
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
 
@@ -24,7 +25,12 @@ pub fn get_users(token: Token, conn: &PgConnection) -> Result<Vec<User>, Errors>
 /*
   auth: Co-worker
 */
-pub fn get_vacations(token: Token, conn: &PgConnection) -> Result<Vec<Vacation>, Errors> {
+pub fn get_vacations(
+    token: Token,
+    date: Option<String>,
+    conn: &PgConnection,
+) -> Result<Vec<Vacation>, Errors> {
     let organization_id = authorize(token, Organization(AuthObj::None), conn)?;
-    organization::get_all_vacations(organization_id, conn)
+    let date = utils::parse_date(date)?;
+    organization::get_all_vacations(organization_id, date, conn)
 }

@@ -34,7 +34,6 @@ pub fn authorize(token: Token, level: AccessLevels, conn: &PgConnection) -> Resu
         AccessLevels::Admin(obj) => authorize_admin(token, obj, conn),
         AccessLevels::Organization(obj) => authorize_organization(token, obj, conn),
         AccessLevels::User(obj) => authorize_user(token, obj, conn),
-        _ => Err(Errors::Unauthorized),
     }
 }
 

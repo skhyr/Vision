@@ -5,22 +5,31 @@ use crate::types::{Config, Initials};
 use crate::types::{Info, Stats, Transition, Vacation};
 use crate::utils::countries::Countries;
 use crate::utils::errors::Errors;
+use chrono::NaiveDate;
 use diesel::PgConnection;
 use uuid::Uuid;
 
-pub fn get_initials(user_id: Uuid, conn: &PgConnection) -> Result<Initials, Errors> {
-    let transitions = transition::get_sorted_transitions(user_id, conn)?;
-    let vacations = vacation::get_user_vacations(user_id, conn)?;
-    let config = get_config(user_id, conn)?;
+pub fn get_initials(
+    user_id: Uuid,
+    date: Option<NaiveDate>,
+    conn: &PgConnection,
+) -> Result<Initials, Errors> {
+    let transitions = transition::get_filtered_transitions(user_id, date, conn)?;
+    let vacations = vacation::get_filtered_vacations(user_id, date, conn)?;
+    let config = get_config(user_id, date, conn)?;
     Ok(Initials(vacations, transitions, config))
 }
 
-pub fn get_config(user_id: Uuid, conn: &PgConnection) -> Result<Config, Errors> {
+pub fn get_config(
+    user_id: Uuid,
+    date: Option<NaiveDate>,
+    conn: &PgConnection,
+) -> Result<Config, Errors> {
     let user = UserRepo::get_by_id(user_id, conn)?;
     Ok(Config {
+        date,
         accounting_day: user.accounting_day,
         country: Countries::PL,
-        date: None,
         full_time_h: 8.0,
         monthly_gen_days: 1.75,
     })
@@ -38,7 +47,7 @@ pub fn get_info(
     })
 }
 
-pub fn get_stats(
+fn get_stats(
     vacations: &Vec<Vacation>,
     transitions: &Vec<Transition>,
     config: &Config,

@@ -2,7 +2,7 @@ use crate::repos::UserRepo;
 use crate::services::authorization::{authorize, AccessLevels::*, AuthObj};
 use crate::services::{organization, user};
 use crate::types::user::NewUser;
-use crate::types::{Config, Info, Initials, Token, User};
+use crate::types::{Info, Initials, Token, User};
 use crate::utils;
 use crate::utils::errors::Errors;
 use diesel::PgConnection;
@@ -34,14 +34,10 @@ pub fn get_info(
     conn: &PgConnection,
 ) -> Result<Info, Errors> {
     let user_uuid = utils::parse_uuid(user_id)?;
+    let date = utils::parse_date(date)?;
     authorize(token, Organization(AuthObj::User(user_uuid)), conn)?;
-    let Initials(vacations, transitions, config) = user::get_initials(user_uuid, conn)?;
-    let calc_date = utils::parse_date(date)?;
-    let mapped_config = Config {
-        date: calc_date,
-        ..config
-    };
-    user::get_info(vacations, transitions, &mapped_config)
+    let Initials(vacations, transitions, config) = user::get_initials(user_uuid, date, conn)?;
+    user::get_info(vacations, transitions, &config)
 }
 
 /*
@@ -49,7 +45,7 @@ pub fn get_info(
 */
 pub fn get_my_info(token: Token, conn: &PgConnection) -> Result<Info, Errors> {
     let my_id = authorize(token, User(AuthObj::None), conn)?;
-    let Initials(vacations, transitions, config) = user::get_initials(my_id, conn)?;
+    let Initials(vacations, transitions, config) = user::get_initials(my_id, None, conn)?;
     user::get_info(vacations, transitions, &config)
 }
 

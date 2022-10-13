@@ -7,6 +7,7 @@ use crate::types::{
     ComputedVacation, Config, Transition, Vacation,
 };
 use crate::utils::errors::Errors;
+use chrono::NaiveDate;
 use diesel::PgConnection;
 use uuid::Uuid;
 
@@ -29,7 +30,7 @@ pub fn get_computed_vacation(
 ) -> Result<ComputedVacation, Errors> {
     let vacation = VacationRepo::get_by_id(vacation_id, conn)?;
     let transitions = TransitionService::get_sorted_transitions(vacation.user_id, conn)?;
-    let config = UserService::get_config(vacation.user_id, conn)?;
+    let config = UserService::get_config(vacation.user_id, None, conn)?;
     let stats = get_vacation_stats(&vacation, &transitions, &config)?;
     Ok(ComputedVacation {
         vacation_id,
@@ -43,6 +44,18 @@ pub fn get_computed_vacation(
 
 pub fn get_user_vacations(user_id: Uuid, conn: &PgConnection) -> Result<Vec<Vacation>, Errors> {
     VacationRepo::get_by_user_id(user_id, conn)
+}
+
+pub fn get_filtered_vacations(
+    user_id: Uuid,
+    date: Option<NaiveDate>,
+    conn: &PgConnection,
+) -> Result<Vec<Vacation>, Errors> {
+    let vacations = get_user_vacations(user_id, conn)?;
+    Ok(match date {
+        None => vacations,
+        Some(d) => vacations.into_iter().filter(|v| v.start_date < d).collect(),
+    })
 }
 
 pub fn add(

@@ -9,14 +9,17 @@ use uuid::Uuid;
 
 /*
   auth: Admin of the user
+  desc: Estimate vacation before adding
 */
 pub fn calc_vacation(
     new_vacation: NewVacation,
     user_id: String,
+    date: Option<String>,
     token: Token,
     conn: &PgConnection,
 ) -> Result<VacationStats, Errors> {
     let user_uuid = utils::parse_uuid(user_id)?;
+    let date = utils::parse_date(date)?;
     authorize(token, Admin(AuthObj::User(user_uuid)), conn)?;
     let vacation = Vacation {
         id: Uuid::new_v4(),
@@ -25,7 +28,7 @@ pub fn calc_vacation(
         start_date: new_vacation.start_date,
         end_date: new_vacation.end_date,
     };
-    let Initials(_, transitions, config) = user::get_initials(user_uuid, conn)?;
+    let Initials(_, transitions, config) = user::get_initials(user_uuid, date, conn)?;
     vacation::get_vacation_stats(&vacation, &transitions, &config)
 }
 

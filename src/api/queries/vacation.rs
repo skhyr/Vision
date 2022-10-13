@@ -7,18 +7,19 @@ use rocket::serde::json::Json;
 use rocket::{routes, Route};
 
 #[post(
-    "/vacation/calc/<user_id>",
+    "/vacation/calc/<user_id>?<date>",
     format = "application/json",
     data = "<body>"
 )]
 async fn get_calc(
     user_id: String,
     token: Token,
+    date: Option<String>,
     conn: DbConn,
     body: Json<NewVacation>,
 ) -> Result<Json<VacationStats>, status::BadRequest<()>> {
     conn.run(move |c| {
-        vacation::calc_vacation(body.into_inner(), user_id, token, c)
+        vacation::calc_vacation(body.into_inner(), user_id, date, token, c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })

@@ -28,13 +28,14 @@ async fn get_users(token: Token, conn: DbConn) -> Result<Json<Vec<User>>, status
     .await
 }
 
-#[get("/organization/vacations", rank = 1)]
+#[get("/organization/vacations?<date>", rank = 1)]
 async fn get_vacations(
     token: Token,
+    date: Option<String>,
     conn: DbConn,
 ) -> Result<Json<Vec<Vacation>>, status::BadRequest<()>> {
     conn.run(move |c| {
-        organization::get_vacations(token, c)
+        organization::get_vacations(token, date, c)
             .map(|r| Json(r))
             .map_err(|_| status::BadRequest(None))
     })

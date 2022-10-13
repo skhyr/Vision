@@ -1,7 +1,6 @@
 use crate::api::DbConn;
 use crate::resolvers::user;
 use crate::types::{Info, Token, User};
-use chrono::NaiveDate;
 use rocket::response::status;
 use rocket::serde::json::Json;
 use rocket::{get, routes, Route};

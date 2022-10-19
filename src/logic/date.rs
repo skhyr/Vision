@@ -24,7 +24,12 @@ pub fn get_now() -> NaiveDate {
 pub fn num_months_between(date1: NaiveDate, date2: NaiveDate) -> i32 {
     let num_years = date2.year() - date1.year();
     let num_months = date2.month() as i32 - date1.month() as i32;
-    num_years * 12 + num_months as i32
+    let num_days = date2.day() as i32 - date1.day() as i32;
+    let base = num_years * 12 + num_months as i32;
+    match num_days < 0 {
+        true => base - 1,
+        false => base,
+    }
 }
 
 pub fn is_workday(date: &NaiveDate) -> bool {

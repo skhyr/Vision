@@ -1,4 +1,5 @@
 use crate::logic::calculator as Calculator;
+use crate::logic::date::get_now;
 use crate::repos::UserRepo;
 use crate::services::{transition, vacation};
 use crate::types::{Config, Initials};
@@ -52,11 +53,37 @@ fn get_stats(
     transitions: &Vec<Transition>,
     config: &Config,
 ) -> Result<Stats, Errors> {
+    let (so_far_h, so_far_d) = Calculator::count_used(
+        vacations,
+        transitions,
+        &Config {
+            date: Some(get_now()),
+            ..*config
+        },
+    )?;
+    let (all_time_h, all_time_d) = Calculator::count_used(
+        vacations,
+        transitions,
+        &Config {
+            date: None,
+            ..*config
+        },
+    )?;
+    let generated_h = Calculator::count_generated_h(
+        transitions,
+        &Config {
+            date: Some(get_now()),
+            ..*config
+        },
+    )?;
+    println!("{:?}", generated_h);
+
     Ok(Stats {
-        generated_hours: Calculator::count_generated_hours(transitions, config)?,
-        used_hours: Calculator::count_used_hours(vacations, transitions, config)?,
-        used_days: Calculator::count_used_days(vacations)?,
-        hours_left: Calculator::count_hours_left(vacations, transitions, config)?,
-        days_left: Calculator::count_days_left(vacations, transitions, config)?,
+        so_far_h,
+        so_far_d,
+        reserved_h: all_time_h - so_far_h,
+        reserved_d: all_time_d - so_far_d,
+        free_h: generated_h - all_time_h,
+        free_d: Calculator::hours_to_days(generated_h - all_time_h, transitions)?,
     })
 }

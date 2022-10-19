@@ -6,4 +6,5 @@ pub enum Errors {
     InvalidVacationFound,
     InvalidId,
     InvalidDate,
+    Unknown,
 }

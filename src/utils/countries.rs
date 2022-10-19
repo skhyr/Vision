@@ -1,6 +1,6 @@
 use std::hash::Hash;
 
-#[derive(Debug, Hash, PartialEq, Eq)]
+#[derive(Debug, Hash, PartialEq, Eq, Copy, Clone)]
 pub enum Countries {
     PL,
 }

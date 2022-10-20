@@ -10,6 +10,8 @@ pub mod repos;
 pub mod resolvers;
 pub mod schema;
 pub mod services;
-pub mod tests;
 pub mod types;
 pub mod utils;
+
+#[cfg(test)]
+pub mod tests;

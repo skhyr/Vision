@@ -90,7 +90,6 @@ pub fn count_generated_h(transitions: &Vec<Transition>, config: &Config) -> Resu
         .iter()
         .fold((0.0, starting_date), |(acc, prev_date), transition| {
             let duration = DateService::num_months_between(transition.date, prev_date) as f64;
-            println!("space {:?}", duration);
             let gen_hours =
                 config.monthly_gen_days * config.full_time_h * duration * transition.fraction;
             (acc + gen_hours, transition.date)

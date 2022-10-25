@@ -76,7 +76,6 @@ fn get_stats(
             ..*config
         },
     )?;
-    println!("{:?}", generated_h);
 
     Ok(Stats {
         so_far_h,

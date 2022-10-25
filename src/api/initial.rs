@@ -41,7 +41,7 @@ pub fn init_routes() -> Rocket<rocket::Build> {
 
     let config = Figment::from(Config::default())
         .merge(("port", port_number))
-        .merge(("databases", map!["vision_db" => db]));
+        .merge(("databases", map!["den27le79lp274" => db]));
 
     rocket::custom(config)
         .attach(DbConn::fairing())

@@ -34,6 +34,7 @@ pub fn get_computed_vacation(
     let stats = get_vacation_stats(&vacation, &transitions, &config)?;
     Ok(ComputedVacation {
         vacation_id,
+        user_id: vacation.user_id,
         title: vacation.title,
         start_date: vacation.start_date,
         end_date: vacation.end_date,

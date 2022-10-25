@@ -10,4 +10,5 @@ pub struct ComputedVacation {
     pub title: String,
     pub start_date: NaiveDate,
     pub end_date: NaiveDate,
+    pub user_id: Uuid,
 }

@@ -12,7 +12,7 @@ use rocket::Rocket;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::{database, diesel};
 
-#[database("den27le79lp274")]
+#[database("d6fnpcjve2cqkj")]
 pub struct DbConn(diesel::PgConnection);
 
 pub fn init_routes() -> Rocket<rocket::Build> {
@@ -41,7 +41,7 @@ pub fn init_routes() -> Rocket<rocket::Build> {
 
     let config = Figment::from(Config::default())
         .merge(("port", port_number))
-        .merge(("databases", map!["den27le79lp274" => db]));
+        .merge(("databases", map!["d6fnpcjve2cqkj" => db]));
 
     rocket::custom(config)
         .attach(DbConn::fairing())

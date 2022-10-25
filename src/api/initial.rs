@@ -12,7 +12,7 @@ use rocket::Rocket;
 use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_sync_db_pools::{database, diesel};
 
-#[database("vision_db")]
+#[database("den27le79lp274")]
 pub struct DbConn(diesel::PgConnection);
 
 pub fn init_routes() -> Rocket<rocket::Build> {

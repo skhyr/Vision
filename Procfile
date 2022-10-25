@@ -1,2 +1,2 @@
 release: ./target/release/diesel migration run
-web: ROCKET_PORT=$PORT ./target/release/vision ; echo $ROCKET_PORT
+web: ROCKET_PORT=$PORT ROCKET_ADDRESS=0.0.0.0 ./target/release/vision

@@ -24,7 +24,8 @@ pub fn init_routes() -> Rocket<rocket::Build> {
         .unwrap();
 
     let db: Map<_, Value> = map! {
-        "url" => std::env::var("DATABASE_URL").unwrap().into()
+        "url" => std::env::var("DATABASE_URL").unwrap().into(),
+        "pool_size" => 10.into()
     };
 
     let cors = CorsOptions::default()
@@ -41,8 +42,10 @@ pub fn init_routes() -> Rocket<rocket::Build> {
 
     let config = Figment::from(Config::default())
         .merge(("port", port_number))
+        .merge(("address", "0.0.0.0"))
         .merge(("databases", map!["vision-db" => db]));
 
+    println!("mounting");
 
     rocket::custom(config)
         .attach(DbConn::fairing())
